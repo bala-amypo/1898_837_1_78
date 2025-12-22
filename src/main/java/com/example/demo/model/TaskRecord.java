@@ -1,0 +1,63 @@
+// src/main/java/com/example/demo/model/TaskRecord.java
+package com.example.demo.model;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "task_records")
+public class TaskRecord {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String title;
+
+    @Column(length = 2000)
+    private String description;
+
+    @Column(nullable = false)
+    private String requiredSkill;
+
+    @Column(nullable = false)
+    private String requiredSkillLevel; // "BEGINNER" | "INTERMEDIATE" | "EXPERT"
+
+    @Column(nullable = false)
+    private String status; // "OPEN", "ACTIVE", "COMPLETED", etc.
+
+    public TaskRecord() {}
+
+    public TaskRecord(String title, String description, String requiredSkill, String requiredSkillLevel, String status) {
+        this.title = title;
+        this.description = description;
+        this.requiredSkill = requiredSkill;
+        this.requiredSkillLevel = requiredSkillLevel;
+        this.status = status;
+    }
+
+    // Getters and setters
+
+    public Long getId() { return id; }
+
+    public void setId(Long id) { this.id = id; }
+
+    public String getTitle() { return title; }
+
+    public void setTitle(String title) { this.title = title; }
+
+    public String getDescription() { return description; }
+
+    public void setDescription(String description) { this.description = description; }
+
+    public String getRequiredSkill() { return requiredSkill; }
+
+    public void setRequiredSkill(String requiredSkill) { this.requiredSkill = requiredSkill; }
+
+    public String getRequiredSkillLevel() { return requiredSkillLevel; }
+
+    public void setRequiredSkillLevel(String requiredSkillLevel) { this.requiredSkillLevel = requiredSkillLevel; }
+
+    public String getStatus() { return status; }
+
+    public void setStatus(String status) { this.status = status; }
+}
