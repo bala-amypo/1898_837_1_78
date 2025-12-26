@@ -15,7 +15,7 @@ public class SwaggerConfig {
         return new OpenAPI()
                 // 1. Required by your specific hosting environment to make "Try it out" work
                 .servers(List.of(
-                        new Server().url("https://9005.vs.amypo.ai")
+                        new Server().url("https://9286.408procr.amypo.ai/")
                 ))
                 // 2. Required by the Project Document (Source 2, Section 9)
                 .info(new Info()
