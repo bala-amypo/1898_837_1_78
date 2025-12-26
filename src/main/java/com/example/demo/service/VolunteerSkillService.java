@@ -4,6 +4,6 @@ import com.example.demo.model.VolunteerSkillRecord;
 import java.util.List;
 
 public interface VolunteerSkillService {
-    List<VolunteerSkillRecord> getSkillsByVolunteer(Long volunteerId); [cite_start]// [cite: 361]
+    List<VolunteerSkillRecord> getSkillsByVolunteer(Long volunteerId);
     VolunteerSkillRecord addOrUpdateSkill(VolunteerSkillRecord skill);
 }

@@ -20,7 +20,6 @@ public class TaskController {
         return taskService.createTask(task);
     }
 
-    [cite_start]// [cite: 418] Endpoint calls assignTask(taskId)
     @PostMapping("/{taskId}/assign")
     public TaskAssignmentRecord assignTask(@PathVariable Long taskId) {
         return assignmentService.assignTask(taskId);

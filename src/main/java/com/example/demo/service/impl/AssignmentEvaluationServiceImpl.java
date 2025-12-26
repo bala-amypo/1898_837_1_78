@@ -20,16 +20,13 @@ public class AssignmentEvaluationServiceImpl implements AssignmentEvaluationServ
 
     @Override
     public AssignmentEvaluationRecord evaluateAssignment(AssignmentEvaluationRecord evaluation) {
-        [cite_start]// [cite: 394] Fetch assignment
         TaskAssignmentRecord assignment = assignmentRepo.findById(evaluation.getAssignmentId())
                 .orElseThrow(() -> new ResourceNotFoundException("Assignment not found"));
 
-        [cite_start]// [cite: 395] Check status COMPLETED
         if (!"COMPLETED".equalsIgnoreCase(assignment.getStatus())) {
             throw new BadRequestException("Assignment must be COMPLETED to evaluate");
         }
 
-        [cite_start]// [cite: 396] Save evaluation
         return evaluationRepo.save(evaluation);
     }
 

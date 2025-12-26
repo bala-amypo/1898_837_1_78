@@ -7,10 +7,10 @@ import java.util.Optional;
 
 public interface VolunteerProfileService {
     VolunteerProfile createVolunteer(VolunteerProfile profile);
-    VolunteerProfile registerVolunteer(RegisterRequest request); [cite_start]// [cite: 353]
+    VolunteerProfile registerVolunteer(RegisterRequest request);
     VolunteerProfile getVolunteerById(Long id);
     List<VolunteerProfile> getAllVolunteers();
     Optional<VolunteerProfile> findByVolunteerId(String volunteerId);
-    VolunteerProfile updateAvailability(Long volunteerId, String availabilityStatus); [cite_start]// [cite: 354]
-    List<VolunteerProfile> getAvailableVolunteers(); [cite_start]// [cite: 355]
+    VolunteerProfile updateAvailability(Long volunteerId, String availabilityStatus);
+    List<VolunteerProfile> getAvailableVolunteers();
 }

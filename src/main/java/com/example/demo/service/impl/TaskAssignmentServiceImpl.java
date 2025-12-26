@@ -29,29 +29,24 @@ public class TaskAssignmentServiceImpl implements TaskAssignmentService {
     @Override
     @Transactional
     public TaskAssignmentRecord assignTask(Long taskId) {
-        [cite_start]// [cite: 380] Check for active assignment. Message MUST contain "ACTIVE assignment"
         if (assignmentRepo.existsByTaskIdAndStatus(taskId, "ACTIVE")) {
-            throw new BadRequestException("Task already has an ACTIVE assignment"); [cite_start]// [cite: 105]
+            throw new BadRequestException("Task already has an ACTIVE assignment");
         }
 
-        [cite_start]// [cite: 382] Fetch task
         TaskRecord task = taskRepo.findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
 
-        [cite_start]// [cite: 383] Fetch AVAILABLE volunteers
         List<VolunteerProfile> availableVolunteers = volunteerRepo.findByAvailabilityStatus("AVAILABLE");
         if (availableVolunteers.isEmpty()) {
-            throw new BadRequestException("No AVAILABLE volunteers found"); [cite_start]// [cite: 54]
+            throw new BadRequestException("No AVAILABLE volunteers found");
         }
 
         VolunteerProfile selectedVolunteer = null;
         int requiredRank = SkillLevelUtil.levelRank(task.getRequiredSkillLevel());
 
-        [cite_start]// [cite: 384] Match logic
         for (VolunteerProfile vol : availableVolunteers) {
             List<VolunteerSkillRecord> skills = skillRepo.findByVolunteerId(vol.getId());
             for (VolunteerSkillRecord skill : skills) {
-                // Check name and level
                 if (skill.getSkillName().equalsIgnoreCase(task.getRequiredSkill())) {
                     int volRank = SkillLevelUtil.levelRank(skill.getSkillLevel());
                     if (volRank >= requiredRank) {
@@ -63,18 +58,15 @@ public class TaskAssignmentServiceImpl implements TaskAssignmentService {
             if (selectedVolunteer != null) break;
         }
 
-        [cite_start]// [cite: 388] Throw if insufficient skill level
         if (selectedVolunteer == null) {
-            throw new BadRequestException("No volunteer found with required skill level"); [cite_start]// [cite: 122]
+            throw new BadRequestException("No volunteer found with required skill level");
         }
 
-        [cite_start]// [cite: 386] Create assignment
         TaskAssignmentRecord assignment = new TaskAssignmentRecord();
         assignment.setTaskId(taskId);
         assignment.setVolunteerId(selectedVolunteer.getId());
-        assignment.setStatus("ACTIVE"); 
-
-        [cite_start]// [cite: 386] Update task status
+        assignment.setStatus("ACTIVE");
+        
         task.setStatus("ACTIVE");
         taskRepo.save(task);
 
@@ -83,12 +75,12 @@ public class TaskAssignmentServiceImpl implements TaskAssignmentService {
 
     @Override
     public List<TaskAssignmentRecord> getAssignmentsByTask(Long taskId) {
-        return assignmentRepo.findByTaskId(taskId); [cite_start]// [cite: 331]
+        return assignmentRepo.findByTaskId(taskId);
     }
 
     @Override
     public List<TaskAssignmentRecord> getAssignmentsByVolunteer(Long volunteerId) {
-        return assignmentRepo.findByVolunteerId(volunteerId); [cite_start]// [cite: 332]
+        return assignmentRepo.findByVolunteerId(volunteerId);
     }
 
     @Override
