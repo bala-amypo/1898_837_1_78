@@ -22,4 +22,9 @@ public class VolunteerSkillServiceImpl implements VolunteerSkillService {
     public VolunteerSkillRecord addOrUpdateSkill(VolunteerSkillRecord skill) {
         return repository.save(skill);
     }
+
+    @Override
+    public VolunteerSkillRecord addSkill(VolunteerSkillRecord skill) {
+        return repository.save(skill);
+    }
 }
