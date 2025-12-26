@@ -18,7 +18,7 @@ public class TaskRecordServiceImpl implements TaskRecordService {
     @Override
     public TaskRecord createTask(TaskRecord task) {
         if (task.getStatus() == null) {
-            task.setStatus("OPEN"); [cite_start]// [cite: 244]
+            task.setStatus("OPEN");
         }
         return repository.save(task);
     }
@@ -53,6 +53,6 @@ public class TaskRecordServiceImpl implements TaskRecordService {
     @Override
     public TaskRecord getTaskById(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task not found")); [cite_start]// [cite: 373]
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
     }
 }
