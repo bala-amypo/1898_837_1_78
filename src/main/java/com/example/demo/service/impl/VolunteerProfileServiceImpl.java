@@ -1,4 +1,3 @@
-// src/main/java/com/example/demo/service/impl/VolunteerProfileServiceImpl.java
 package com.example.demo.service.impl;
 
 import com.example.demo.exception.BadRequestException;
@@ -7,47 +6,41 @@ import com.example.demo.model.VolunteerProfile;
 import com.example.demo.repository.VolunteerProfileRepository;
 import com.example.demo.service.VolunteerProfileService;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class VolunteerProfileServiceImpl implements VolunteerProfileService {
 
-    private final VolunteerProfileRepository profileRepository;
+    private final VolunteerProfileRepository repository;
 
-    public VolunteerProfileServiceImpl(VolunteerProfileRepository profileRepository) {
-        this.profileRepository = profileRepository;
+    public VolunteerProfileServiceImpl(VolunteerProfileRepository repository) {
+        this.repository = repository;
     }
 
     @Override
     public VolunteerProfile registerVolunteer(VolunteerProfile profile) {
-        if (profile == null) throw new BadRequestException("Profile must not be null");
-        if (profile.getEmail() == null || profile.getEmail().isBlank())
-            throw new BadRequestException("Email is required");
-        profileRepository.findByEmail(profile.getEmail()).ifPresent(p -> {
-            throw new BadRequestException("Email already registered");
-        });
-        if (profile.getAvailabilityStatus() == null || profile.getAvailabilityStatus().isBlank()) {
-            profile.setAvailabilityStatus("UNAVAILABLE");
+        if (repository.findByEmail(profile.getEmail()).isPresent()) {
+            throw new BadRequestException("Email already exists");
         }
-        return profileRepository.save(profile);
+        profile.setAvailabilityStatus("AVAILABLE");
+        return repository.save(profile);
     }
 
     @Override
-    public VolunteerProfile updateAvailability(Long volunteerId, String availabilityStatus) {
-        VolunteerProfile profile = profileRepository.findById(volunteerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Volunteer not found"));
-        if (!Objects.equals(availabilityStatus, "AVAILABLE") &&
-            !Objects.equals(availabilityStatus, "UNAVAILABLE")) {
+    public VolunteerProfile updateAvailability(Long volunteerId, String status) {
+        if (!status.equals("AVAILABLE") && !status.equals("UNAVAILABLE")) {
             throw new BadRequestException("Invalid availability status");
         }
-        profile.setAvailabilityStatus(availabilityStatus);
-        return profileRepository.save(profile);
+
+        VolunteerProfile profile = repository.findById(volunteerId)
+            .orElseThrow(() -> new ResourceNotFoundException("Volunteer not found"));
+        
+        profile.setAvailabilityStatus(status);
+        return repository.save(profile);
     }
 
     @Override
     public List<VolunteerProfile> getAvailableVolunteers() {
-        return profileRepository.findByAvailabilityStatus("AVAILABLE");
+        return repository.findByAvailabilityStatus("AVAILABLE");
     }
 }
