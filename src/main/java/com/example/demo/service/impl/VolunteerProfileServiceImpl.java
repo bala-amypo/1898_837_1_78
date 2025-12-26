@@ -19,30 +19,29 @@ public class VolunteerProfileServiceImpl implements VolunteerProfileService {
 
     @Override
     public VolunteerProfile createVolunteer(VolunteerProfile profile) {
-        [cite_start]// [cite: 34] Tests expect "Email already exists" on duplicate
         if (repository.existsByEmail(profile.getEmail())) {
-            throw new BadRequestException("Email already exists");
+            throw new BadRequestException("Email already exists"); [cite_start]// [cite: 33]
         }
         return repository.save(profile);
     }
 
-    @Override // Helper for Controller DTO mapping
+    @Override
     public VolunteerProfile registerVolunteer(RegisterRequest request) {
         if (repository.existsByEmail(request.getEmail())) {
-            throw new BadRequestException("Email already exists");
+            throw new BadRequestException("Email already exists"); [cite_start]// [cite: 207]
         }
         VolunteerProfile profile = new VolunteerProfile();
         profile.setFullName(request.getName());
         profile.setEmail(request.getEmail());
         profile.setAvailabilityStatus(request.getAvailabilityStatus() != null ? request.getAvailabilityStatus() : "AVAILABLE");
-        // Set other fields from request as needed
+        // In a real app, password handling happens in Controller/Security layer, saving profile here
         return repository.save(profile);
     }
 
     @Override
     public VolunteerProfile getVolunteerById(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Volunteer not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Volunteer not found")); [cite_start]// [cite: 343]
     }
 
     @Override
@@ -59,7 +58,7 @@ public class VolunteerProfileServiceImpl implements VolunteerProfileService {
     public VolunteerProfile updateAvailability(Long id, String status) {
         VolunteerProfile vp = getVolunteerById(id);
         if (!status.equals("AVAILABLE") && !status.equals("UNAVAILABLE")) {
-            throw new BadRequestException("Invalid availability status"); 
+            throw new BadRequestException("Invalid availability status"); [cite_start]// [cite: 208]
         }
         vp.setAvailabilityStatus(status);
         return repository.save(vp);
@@ -67,6 +66,6 @@ public class VolunteerProfileServiceImpl implements VolunteerProfileService {
 
     @Override
     public List<VolunteerProfile> getAvailableVolunteers() {
-        return repository.findByAvailabilityStatus("AVAILABLE");
+        return repository.findByAvailabilityStatus("AVAILABLE"); [cite_start]// [cite: 358]
     }
 }

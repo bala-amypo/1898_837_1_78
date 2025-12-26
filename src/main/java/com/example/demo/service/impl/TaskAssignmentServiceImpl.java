@@ -29,14 +29,16 @@ public class TaskAssignmentServiceImpl implements TaskAssignmentService {
     @Override
     @Transactional
     public TaskAssignmentRecord assignTask(Long taskId) {
-        [cite_start]// [cite: 105, 341] Test expects message "ACTIVE assignment"
+        [cite_start]// [cite: 380] Check for active assignment. Message MUST contain "ACTIVE assignment"
         if (assignmentRepo.existsByTaskIdAndStatus(taskId, "ACTIVE")) {
-            throw new BadRequestException("Task already has an ACTIVE assignment");
+            throw new BadRequestException("Task already has an ACTIVE assignment"); [cite_start]// [cite: 105]
         }
 
+        [cite_start]// [cite: 382] Fetch task
         TaskRecord task = taskRepo.findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
 
+        [cite_start]// [cite: 383] Fetch AVAILABLE volunteers
         List<VolunteerProfile> availableVolunteers = volunteerRepo.findByAvailabilityStatus("AVAILABLE");
         if (availableVolunteers.isEmpty()) {
             throw new BadRequestException("No AVAILABLE volunteers found"); [cite_start]// [cite: 54]
@@ -45,12 +47,13 @@ public class TaskAssignmentServiceImpl implements TaskAssignmentService {
         VolunteerProfile selectedVolunteer = null;
         int requiredRank = SkillLevelUtil.levelRank(task.getRequiredSkillLevel());
 
+        [cite_start]// [cite: 384] Match logic
         for (VolunteerProfile vol : availableVolunteers) {
             List<VolunteerSkillRecord> skills = skillRepo.findByVolunteerId(vol.getId());
             for (VolunteerSkillRecord skill : skills) {
+                // Check name and level
                 if (skill.getSkillName().equalsIgnoreCase(task.getRequiredSkill())) {
                     int volRank = SkillLevelUtil.levelRank(skill.getSkillLevel());
-                    [cite_start]// [cite: 122] Logic to ensure skill level is sufficient
                     if (volRank >= requiredRank) {
                         selectedVolunteer = vol;
                         break;
@@ -60,17 +63,18 @@ public class TaskAssignmentServiceImpl implements TaskAssignmentService {
             if (selectedVolunteer != null) break;
         }
 
-        [cite_start]// [cite: 121] If no volunteer meets criteria (including level), throw exception
+        [cite_start]// [cite: 388] Throw if insufficient skill level
         if (selectedVolunteer == null) {
-            throw new BadRequestException("No volunteer found with required skill level");
+            throw new BadRequestException("No volunteer found with required skill level"); [cite_start]// [cite: 122]
         }
 
+        [cite_start]// [cite: 386] Create assignment
         TaskAssignmentRecord assignment = new TaskAssignmentRecord();
         assignment.setTaskId(taskId);
         assignment.setVolunteerId(selectedVolunteer.getId());
-        assignment.setStatus("ACTIVE"); [cite_start]// [cite: 76]
+        assignment.setStatus("ACTIVE"); 
 
-        // Update task status as per doc requirement
+        [cite_start]// [cite: 386] Update task status
         task.setStatus("ACTIVE");
         taskRepo.save(task);
 
@@ -79,16 +83,25 @@ public class TaskAssignmentServiceImpl implements TaskAssignmentService {
 
     @Override
     public List<TaskAssignmentRecord> getAssignmentsByTask(Long taskId) {
-        return assignmentRepo.findByTaskId(taskId);
+        return assignmentRepo.findByTaskId(taskId); [cite_start]// [cite: 331]
     }
 
     @Override
     public List<TaskAssignmentRecord> getAssignmentsByVolunteer(Long volunteerId) {
-        return assignmentRepo.findByVolunteerId(volunteerId);
+        return assignmentRepo.findByVolunteerId(volunteerId); [cite_start]// [cite: 332]
     }
 
     @Override
     public List<TaskAssignmentRecord> getAllAssignments() {
         return assignmentRepo.findAll();
+    }
+
+    @Override
+    public TaskAssignmentRecord updateAssignmentStatus(Long assignmentId, String status) {
+        TaskAssignmentRecord assignment = assignmentRepo.findById(assignmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Assignment not found"));
+        
+        assignment.setStatus(status);
+        return assignmentRepo.save(assignment);
     }
 }
