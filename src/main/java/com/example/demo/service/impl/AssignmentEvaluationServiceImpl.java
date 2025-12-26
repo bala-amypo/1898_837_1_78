@@ -9,7 +9,6 @@ import com.example.demo.repository.TaskAssignmentRecordRepository;
 import com.example.demo.service.AssignmentEvaluationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -24,6 +23,7 @@ public class AssignmentEvaluationServiceImpl implements AssignmentEvaluationServ
         TaskAssignmentRecord assignment = assignmentRepo.findById(evaluation.getAssignmentId())
                 .orElseThrow(() -> new ResourceNotFoundException("Assignment not found"));
 
+        [cite_start]// [cite: 279] Must be COMPLETED to evaluate
         if (!"COMPLETED".equalsIgnoreCase(assignment.getStatus())) {
             throw new BadRequestException("Assignment must be COMPLETED to evaluate");
         }

@@ -15,7 +15,6 @@ import com.example.demo.util.SkillLevelUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Service
@@ -30,31 +29,28 @@ public class TaskAssignmentServiceImpl implements TaskAssignmentService {
     @Override
     @Transactional
     public TaskAssignmentRecord assignTask(Long taskId) {
-        // 1. Check for active assignment
+        [cite_start]// [cite: 105, 341] Test expects message "ACTIVE assignment"
         if (assignmentRepo.existsByTaskIdAndStatus(taskId, "ACTIVE")) {
             throw new BadRequestException("Task already has an ACTIVE assignment");
         }
 
-        // 2. Fetch Task
         TaskRecord task = taskRepo.findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
 
-        // 3. Find Available Volunteers
-        List<VolunteerProfile> candidates = volunteerRepo.findByAvailabilityStatus("AVAILABLE");
-        if (candidates.isEmpty()) {
-            throw new BadRequestException("No AVAILABLE volunteers found");
+        List<VolunteerProfile> availableVolunteers = volunteerRepo.findByAvailabilityStatus("AVAILABLE");
+        if (availableVolunteers.isEmpty()) {
+            throw new BadRequestException("No AVAILABLE volunteers found"); [cite_start]// [cite: 54]
         }
 
-        // 4. Match Logic
         VolunteerProfile selectedVolunteer = null;
         int requiredRank = SkillLevelUtil.levelRank(task.getRequiredSkillLevel());
 
-        for (VolunteerProfile vol : candidates) {
+        for (VolunteerProfile vol : availableVolunteers) {
             List<VolunteerSkillRecord> skills = skillRepo.findByVolunteerId(vol.getId());
             for (VolunteerSkillRecord skill : skills) {
-                // Must match Name AND Level >= Required
                 if (skill.getSkillName().equalsIgnoreCase(task.getRequiredSkill())) {
                     int volRank = SkillLevelUtil.levelRank(skill.getSkillLevel());
+                    [cite_start]// [cite: 122] Logic to ensure skill level is sufficient
                     if (volRank >= requiredRank) {
                         selectedVolunteer = vol;
                         break;
@@ -64,16 +60,17 @@ public class TaskAssignmentServiceImpl implements TaskAssignmentService {
             if (selectedVolunteer != null) break;
         }
 
+        [cite_start]// [cite: 121] If no volunteer meets criteria (including level), throw exception
         if (selectedVolunteer == null) {
             throw new BadRequestException("No volunteer found with required skill level");
         }
 
-        // 5. Create Assignment
         TaskAssignmentRecord assignment = new TaskAssignmentRecord();
         assignment.setTaskId(taskId);
         assignment.setVolunteerId(selectedVolunteer.getId());
-        assignment.setStatus("ACTIVE");
-        
+        assignment.setStatus("ACTIVE"); [cite_start]// [cite: 76]
+
+        // Update task status as per doc requirement
         task.setStatus("ACTIVE");
         taskRepo.save(task);
 
@@ -89,7 +86,7 @@ public class TaskAssignmentServiceImpl implements TaskAssignmentService {
     public List<TaskAssignmentRecord> getAssignmentsByVolunteer(Long volunteerId) {
         return assignmentRepo.findByVolunteerId(volunteerId);
     }
-    
+
     @Override
     public List<TaskAssignmentRecord> getAllAssignments() {
         return assignmentRepo.findAll();

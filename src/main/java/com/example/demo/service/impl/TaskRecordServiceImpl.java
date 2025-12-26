@@ -6,7 +6,6 @@ import com.example.demo.repository.TaskRecordRepository;
 import com.example.demo.service.TaskRecordService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -18,8 +17,9 @@ public class TaskRecordServiceImpl implements TaskRecordService {
 
     @Override
     public TaskRecord createTask(TaskRecord task) {
-        // Status defaults to OPEN via @PrePersist or manual
-        if(task.getStatus() == null) task.setStatus("OPEN");
+        if (task.getStatus() == null) {
+            task.setStatus("OPEN"); [cite_start]// [cite: 72] Default status
+        }
         return repository.save(task);
     }
 
@@ -45,9 +45,15 @@ public class TaskRecordServiceImpl implements TaskRecordService {
     public Optional<TaskRecord> getTaskByCode(String code) {
         return repository.findByTaskCode(code);
     }
-    
+
     @Override
     public List<TaskRecord> getAllTasks() {
         return repository.findAll();
+    }
+    
+    @Override
+    public TaskRecord getTaskById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
     }
 }
