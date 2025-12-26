@@ -8,7 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter; // This is the CORRECT import
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -30,10 +30,10 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/hello").permitAll()
+                [cite_start]// ADDED "/error" here to fix the 403 masking issue [cite: 1]
+                .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/hello", "/error").permitAll()
                 .anyRequest().authenticated()
             )
-            // CORRECTED LINE: Using UsernamePasswordAuthenticationFilter.class
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
             
         return http.build();
