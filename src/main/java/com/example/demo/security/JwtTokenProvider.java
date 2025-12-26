@@ -19,11 +19,11 @@ public class JwtTokenProvider {
     private final long jwtExpirationInMs;
     private final Key key;
 
-    // Constructor injection for Mockito compatibility in tests
     public JwtTokenProvider(@Value("${app.jwtSecret}") String jwtSecret,
                             @Value("${app.jwtExpirationInMs}") long jwtExpirationInMs) {
         this.jwtSecret = jwtSecret;
         this.jwtExpirationInMs = jwtExpirationInMs;
+        // CHANGE: Use HS256 instead of HS512 to support the 320-bit key provided in tests
         this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -34,14 +34,15 @@ public class JwtTokenProvider {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId);
         claims.put("role", role);
-        claims.put("email", authentication.getName()); // Matches Test 55 expectation
+        claims.put("email", authentication.getName());
 
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(authentication.getName())
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
-                .signWith(key, SignatureAlgorithm.HS512)
+                // CHANGE: Explicitly sign with HS256
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 

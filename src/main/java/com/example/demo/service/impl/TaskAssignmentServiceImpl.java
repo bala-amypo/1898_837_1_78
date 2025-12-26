@@ -65,8 +65,10 @@ public class TaskAssignmentServiceImpl implements TaskAssignmentService {
         TaskAssignmentRecord assignment = new TaskAssignmentRecord();
         assignment.setTaskId(taskId);
         assignment.setVolunteerId(selectedVolunteer.getId());
-        assignment.setStatus("ACTIVE");
         
+        // FIX: Explicitly set status for Mockito tests that ignore @PrePersist
+        assignment.setStatus("ACTIVE"); 
+
         task.setStatus("ACTIVE");
         taskRepo.save(task);
 

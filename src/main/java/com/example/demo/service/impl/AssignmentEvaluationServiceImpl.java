@@ -9,6 +9,7 @@ import com.example.demo.repository.TaskAssignmentRecordRepository;
 import com.example.demo.service.AssignmentEvaluationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -25,6 +26,11 @@ public class AssignmentEvaluationServiceImpl implements AssignmentEvaluationServ
 
         if (!"COMPLETED".equalsIgnoreCase(assignment.getStatus())) {
             throw new BadRequestException("Assignment must be COMPLETED to evaluate");
+        }
+
+        // FIX: Explicitly set timestamp for Mockito tests that ignore @PrePersist
+        if (evaluation.getEvaluatedAt() == null) {
+            evaluation.setEvaluatedAt(LocalDateTime.now());
         }
 
         return evaluationRepo.save(evaluation);

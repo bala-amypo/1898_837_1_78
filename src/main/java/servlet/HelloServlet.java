@@ -6,14 +6,19 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @WebServlet("/hello")
 public class HelloServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("text/plain");
-        if (resp.getWriter() != null) {
-            resp.getWriter().write("Hello from HelloServlet");
+        // Fix: Ensure getWriter() is called exactly once to satisfy Mockito verification
+        if (resp != null) {
+            resp.setContentType("text/plain");
+            PrintWriter writer = resp.getWriter();
+            if (writer != null) {
+                writer.write("Hello from HelloServlet");
+            }
         }
     }
 }
