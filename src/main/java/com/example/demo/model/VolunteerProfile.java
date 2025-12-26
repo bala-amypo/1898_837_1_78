@@ -1,60 +1,33 @@
-// src/main/java/com/example/demo/model/VolunteerProfile.java
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import java.util.Objects;
+import lombok.*;
+import java.util.List;
 
 @Entity
-@Table(name = "volunteer_profiles", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "email")
-})
+@Table(name = "volunteer_profiles")
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class VolunteerProfile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; [cite: 26]
 
-    private String name;
+    private String name; [cite: 27]
 
-    @Column(nullable = false, unique = true)
-    private String email;
+    @Column(unique = true)
+    private String email; [cite: 28, 37]
 
-    @Column(nullable = false)
-    private String availabilityStatus; // "AVAILABLE" or "UNAVAILABLE"
+    private String availabilityStatus; // "AVAILABLE" or "UNAVAILABLE" [cite: 29]
 
-    public VolunteerProfile() {}
+    @OneToMany(mappedBy = "volunteerId", cascade = CascadeType.ALL)
+    private List<VolunteerSkillRecord> skills; [cite: 34]
 
+    // Parameterized constructor as required [cite: 32]
     public VolunteerProfile(String name, String email, String availabilityStatus) {
         this.name = name;
         this.email = email;
         this.availabilityStatus = availabilityStatus;
     }
-
-    // Getters and setters
-
-    public Long getId() { return id; }
-
-    public void setId(Long id) { this.id = id; }
-
-    public String getName() { return name; }
-
-    public void setName(String name) { this.name = name; }
-
-    public String getEmail() { return email; }
-
-    public void setEmail(String email) { this.email = email; }
-
-    public String getAvailabilityStatus() { return availabilityStatus; }
-
-    public void setAvailabilityStatus(String availabilityStatus) { this.availabilityStatus = availabilityStatus; }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof VolunteerProfile)) return false;
-        VolunteerProfile that = (VolunteerProfile) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() { return Objects.hash(id); }
 }
