@@ -1,11 +1,8 @@
-// src/main/java/com/example/demo/controller/VolunteerSkillController.java
 package com.example.demo.controller;
 
 import com.example.demo.model.VolunteerSkillRecord;
 import com.example.demo.service.VolunteerSkillService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -18,13 +15,13 @@ public class VolunteerSkillController {
         this.skillService = skillService;
     }
 
-    @GetMapping("/volunteer/{volunteerId}")
-    public ResponseEntity<List<VolunteerSkillRecord>> getByVolunteer(@PathVariable Long volunteerId) {
-        return ResponseEntity.ok(skillService.getSkillsByVolunteer(volunteerId));
+    @PostMapping
+    public VolunteerSkillRecord addSkill(@RequestBody VolunteerSkillRecord skill) {
+        return skillService.addSkill(skill);
     }
 
-    @PostMapping
-    public ResponseEntity<VolunteerSkillRecord> addOrUpdate(@RequestBody VolunteerSkillRecord body) {
-        return ResponseEntity.ok(skillService.addOrUpdateSkill(body));
+    @GetMapping("/volunteer/{volunteerId}")
+    public List<VolunteerSkillRecord> getSkills(@PathVariable Long volunteerId) {
+        return skillService.getSkillsByVolunteer(volunteerId);
     }
 }
