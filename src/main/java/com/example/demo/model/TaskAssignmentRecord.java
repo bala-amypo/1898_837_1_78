@@ -15,7 +15,9 @@ public class TaskAssignmentRecord {
 
     private Long taskId;
     private Long volunteerId;
-    private String status; // ACTIVE, COMPLETED
+    
+    // FIX: Initialize default here so it passes Mockito tests that ignore @PrePersist
+    private String status = "ACTIVE"; 
 
     @PrePersist
     public void setDefaultStatus() {

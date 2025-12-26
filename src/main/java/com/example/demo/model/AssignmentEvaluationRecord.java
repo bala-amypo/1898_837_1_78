@@ -17,12 +17,15 @@ public class AssignmentEvaluationRecord {
     private Long assignmentId;
     private Integer rating;
     private String comments;
-    private String feedback; // From JPA test case source 87
+    private String feedback;
 
-    private LocalDateTime evaluatedAt;
+    // FIX: Initialize default here so it passes Mockito tests that ignore @PrePersist
+    private LocalDateTime evaluatedAt = LocalDateTime.now();
 
     @PrePersist
     public void setTimestamp() {
-        this.evaluatedAt = LocalDateTime.now();
+        if (this.evaluatedAt == null) {
+            this.evaluatedAt = LocalDateTime.now();
+        }
     }
 }
