@@ -30,7 +30,6 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                [cite_start]// ADDED "/error" here to fix the 403 masking issue [cite: 1]
                 .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/hello", "/error").permitAll()
                 .anyRequest().authenticated()
             )
