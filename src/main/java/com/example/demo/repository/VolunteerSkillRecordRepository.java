@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface VolunteerSkillRecordRepository extends JpaRepository<VolunteerSkillRecord, Long> {
     List<VolunteerSkillRecord> findByVolunteerId(Long volunteerId);
+    List<VolunteerSkillRecord> findBySkillNameAndSkillLevel(String skillName, String skillLevel);
+    List<VolunteerSkillRecord> findBySkillName(String skillName);
 }
