@@ -1,12 +1,5 @@
-// src/main/java/com/example/demo/service/VolunteerProfileService.java
-package com.example.demo.service;
-
-import com.example.demo.model.VolunteerProfile;
-
-import java.util.List;
-
 public interface VolunteerProfileService {
-    VolunteerProfile registerVolunteer(VolunteerProfile profile);
-    VolunteerProfile updateAvailability(Long volunteerId, String availabilityStatus);
-    List<VolunteerProfile> getAvailableVolunteers();
+    VolunteerProfile registerVolunteer(RegisterRequest request); [cite: 183]
+    VolunteerProfile updateAvailability(Long volunteerId, String availabilityStatus); [cite: 184]
+    List<VolunteerProfile> getAvailableVolunteers(); [cite: 185]
 }
